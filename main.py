@@ -6,8 +6,8 @@ import numpy as np
 from numpy import cos, sin
 import reference_condtions as rc
 
-CSV_FILE = Path("raw_Group12_2D.csv")
-EXCEL_FILE = Path("SLT practical coordinates.xlsx")
+CSV_FILE = Path("data files/raw_Group12_2D.csv")
+EXCEL_FILE = Path("data files/SLT practical coordinates.xlsx")
 
 run_number = []
 time = []
