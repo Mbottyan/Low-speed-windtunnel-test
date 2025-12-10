@@ -15,7 +15,8 @@ def normal_force(c,location_top, location_bottom, pressure_top, pessure_bottom):
     for length, pressure in zip(diff_bottom,avg_pressure_bottom):
         force+=length*pressure*c
     return force
-def tangential_force(location_y_top,location_y_bottom, pressure_top, pessure_bottom):
+
+def tangential_force(c,location_y_top,location_y_bottom, pressure_top, pessure_bottom):
     diff_y_top = np.array([location_y_top[i] - location_y_top[i-1] for i in range(1, len(location_y_top))])
     diff_y_bottom= np.array([location_y_bottom[i] - location_y_bottom[i-1] for i in range(1, len(location_y_bottom))])
     force=0
@@ -28,7 +29,7 @@ def drag_velocity(u_inf,u_y,p_inf, p_y,rho, y_locations):
     avg_p=np.array([(p_y[i] + p_y[i-1])/2 for i in range(1, len(p_y))])
     drag=0
     for length,u,p in zip(diff_y,avg_u,avg_p):
-        drag+=((rho*(u_inf-u)*u)+(p_inf-p))*length
+        drag+=((rho*(u_inf-u)*u)+(p_inf-p))*length*c
     return drag
 
 def lift_drag_surface_alpha(alpha):
@@ -38,7 +39,7 @@ def lift_drag_surface_alpha(alpha):
 
 def lift_drag_wake_alpha(alpha):
     normal=normal_force(c,location_top, location_bottom, pressure_top, pessure_bottom)
-    tangential=(drag_velocity(u_inf,u_y,p_inf, p_y,rho, y_locations)-norma*sin(alpha))/cos(alpha)
+    tangential=(drag_velocity(u_inf,u_y,p_inf, p_y,rho, y_locations)-normal*sin(alpha))/cos(alpha)
     lift=normal*cos(alpha)-tangential*sin(alpha)
     drag=+normal*sin(alpha)+tangential*cos(alpha)
     return lift,drag
@@ -59,13 +60,13 @@ def moment(c,location_top, location_bottom,location_y_top,location_y_bottom, pre
 
     M=0
     for length, location, pressure  in zip(diff_top,avg_x_top,avg_pressure_top):
-        M+=length*pressure*location
+        M+=length*pressure*location*c
     for length, location, pressure  in zip(diff_bottom,avg_x_bottom,avg_pressure_bottom):
-        M-=length*pressure*location
+        M-=length*pressure*location*c
     for length, location, pressure  in zip(diff_y_top,avg_x_y_top,avg_pressure_top):
-        M+=length*pressure*location
+        M+=length*pressure*location*c
     for length, location, pressure  in zip(diff_y_bottom,avg_x_y_bottom,avg_pressure_bottom):
-        M-=length*pressure*location
+        M-=length*pressure*location*c
     return M
 
     
