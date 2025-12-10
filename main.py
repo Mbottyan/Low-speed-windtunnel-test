@@ -3,8 +3,9 @@ from pathlib import Path
 
 import pandas as pd
 import numpy as np
-from numpy import cos, sin
+from numpy import cos, sin #is this needed?
 import reference_condtions as rc
+import pressure_coefficient as pc
 
 CSV_FILE = Path("data files/raw_Group12_2D.csv")
 EXCEL_FILE = Path("data files/SLT practical coordinates.xlsx")
@@ -42,6 +43,8 @@ with CSV_FILE.open("r", encoding="utf-8") as data_file:
 
         tap_values = [float(row[i]) for i in p_indices]
         pressure_taps.append(tap_values)
+
+n_measurements = len(run_number)
 
 airfoil_pressure_tap_coordinates = []
 total_wake_rake_locations = []
@@ -100,7 +103,12 @@ if EXCEL_FILE.exists():
 else:
     print(f"Excel file not found: {EXCEL_FILE}")
 
-print("airfoil pressure taps:", airfoil_pressure_tap_coordinates)
+"""print("airfoil pressure taps:", airfoil_pressure_tap_coordinates)
 print("wake rake total ports:", total_wake_rake_locations)
 print("wake rake static ports:", static_wake_rake_locations)
-print("pitot-static ports:", pitot_static_ports)
+print("pitot-static ports:", pitot_static_ports)"""
+
+q_inf = rc.calculate_reference_dynamic_pressure(sum(delta_pb_value) / n_measurements)
+p_inf = rc.calculate_reference_static_pressure(sum(p_bar_value) / n_measurements, q_inf)
+
+print(pc.pressure_coefficient(q_inf, p_inf, pressure_taps, 2, airfoil_pressure_tap_coordinates))  
