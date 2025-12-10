@@ -19,8 +19,10 @@ def normal_force(c,location_top, location_bottom, pressure_top, pessure_bottom):
 def tangential_force(c,location_y_top,location_y_bottom, pressure_top, pessure_bottom):
     diff_y_top = np.array([location_y_top[i] - location_y_top[i-1] for i in range(1, len(location_y_top))])
     diff_y_bottom= np.array([location_y_bottom[i] - location_y_bottom[i-1] for i in range(1, len(location_y_bottom))])
+    avg_pressure_top=np.array([(pressure_top[i] + pressure_top[i-1])/2 for i in range(1, len(pressure_top))])
+    avg_pressure_bottom=np.array([(pessure_bottom[i] + pessure_bottom[i-1])/2 for i in range(1, len(pessure_bottom))])
     force=0
-    for length, pressure in zip(np.concatenate((diff_top, diff_bottom)),np.concatenate((avg_pressure_top,avg_pressure_bottom))):
+    for length, pressure in zip(np.concatenate((diff_y_top, diff_y_bottom)),np.concatenate((avg_pressure_top,avg_pressure_bottom))):
         force-=length*pressure*c
     return force
 def drag_velocity(u_inf,u_y,p_inf, p_y,rho, y_locations):
