@@ -111,4 +111,4 @@ print("pitot-static ports:", pitot_static_ports)"""
 q_inf = rc.calculate_reference_dynamic_pressure(sum(delta_pb_value) / n_measurements)
 p_inf = rc.calculate_reference_static_pressure(sum(p_bar_value) / n_measurements, q_inf)
 
-print(pc.pressure_coefficient(q_inf, p_inf, pressure_taps, 10, airfoil_pressure_tap_coordinates))  
+print(pc.pressure_coefficient(q_inf, p_inf, pressure_taps, 5, airfoil_pressure_tap_coordinates, alpha))  #if you change the number you cahnge which experemient are you calucalting the cp for

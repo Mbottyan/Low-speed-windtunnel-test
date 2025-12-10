@@ -1,8 +1,16 @@
-def pressure_coefficient(q_inf, p_inf, pressure_taps, nth_measurement, coordinates):
+def pressure_coefficient(q_inf, p_inf, pressure_taps, nth_measurement, coordinates, aoa, Plot=True):
     out = []
     for i in range(len(coordinates)):
-        out.append((coordinates[i][1], coordinates[i][2], (pressure_taps[i][nth_measurement] - p_inf) / q_inf))
-    plot_cp(out)
+        out.append((coordinates[i][1], coordinates[i][2], (pressure_taps[i][nth_measurement]) / q_inf))
+    
+    # Writing to CSV file
+    with open("data files/cp_data/cp_data at {}° aoa.csv".format(aoa[nth_measurement]), "w") as f:
+        f.write("# x, Cp\n")
+        for x, y, cp in out:
+            f.write(f"{x:.6f}, {cp:.6f}\n")
+
+    if Plot:
+        plot_cp(out)
     return out
 
 
