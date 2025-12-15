@@ -15,3 +15,7 @@ def calculate_reference_dynamic_pressure(dp):
 def calculate_reference_static_pressure(pt, q):
     # static pressure in Pa
     return pt - q
+
+def calculate_reference_velocity(rho, q):
+    # U_inf in m/s
+    return (2*q/rho)**(1/2)
