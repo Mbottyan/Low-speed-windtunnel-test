@@ -1,7 +1,7 @@
-def pressure_coefficient(q_inf, p_inf, pressure_taps, nth_measurement, coordinates, aoa, Plot=True):
+def pressure_coefficient(P_atm, q_inf, p_inf, pressure_taps, nth_measurement, coordinates, aoa, Plot=True):
     out = []
     for i in range(len(coordinates)):
-        out.append((coordinates[i][1], coordinates[i][2], (pressure_taps[i][nth_measurement]) / q_inf))
+        out.append((coordinates[i][1], coordinates[i][2], (pressure_taps[nth_measurement][i] + P_atm - p_inf) / q_inf))
     
     # Writing to txt file
     with open("data files/cp_data/experimental/cp_data at {}° aoa.txt".format(aoa[nth_measurement]), "w") as f:

@@ -3,11 +3,11 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 # Load the experimental data
-experimental_data_path = 'data files/cp_data/experimental/cp_data at 10.2° aoa.csv'
-experimental_data = pd.read_csv(experimental_data_path)
+experimental_data_path = 'data files/cp_data/experimental/cp_data at 5.0° aoa.txt'
+experimental_data = pd.read_csv(experimental_data_path, sep=' ', names=['x/c', 'Cp'])
 
-x_experimental = experimental_data['# x']
-cp_experimental = experimental_data[' Cp']
+x_experimental = experimental_data['x/c']
+cp_experimental = experimental_data['Cp']
 
 """# Load the simulation data
 simulation_data_path = 'data files/cp_data/simulation/cp_data at 0.0° aoa.csv'
@@ -17,8 +17,8 @@ x_simulation = simulation_data['# x']
 cp_simulation = simulation_data[' Cp']"""
 
 # Test cas
-x_simulation = np.linspace(0, 100, 100)
-cp_simulation = - (np.sin(np.pi * x_simulation/100))
+x_simulation = np.linspace(0, 1, 100)
+cp_simulation = - (np.sin(np.pi * x_simulation))
 
 # Create the plot
 plt.figure(figsize=(10, 6))
