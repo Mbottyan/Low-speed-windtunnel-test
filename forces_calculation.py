@@ -11,6 +11,7 @@ def scatter_point(x, y, **kwargs):
     default_kwargs = dict(s=30, color='black', zorder=5)
     default_kwargs.update(kwargs)
     return plt.scatter(x, y, **default_kwargs)
+    
 
 def normal_force(location_x_top, location_x_bottom, pressure_top, pessure_bottom):
     diff_top = np.array([location_x_top[i] - location_x_top[i-1] for i in range(1, len(location_x_top))])
@@ -107,7 +108,7 @@ def plot_u(u,min_y, max_y, step=0.1):
     plt.ylim(0)
     plt.xlabel('y [mm]', fontsize=14, fontweight='bold')
     plt.ylabel('Velocity [m/s]', fontsize=14, fontweight='bold')
-    plt.title('Wake rake velocicy vs y', fontsize=16, fontweight='bold')
+    #plt.title('Wake rake velocicy vs y', fontsize=16, fontweight='bold')
     
     plt.legend(fontsize=12, loc='best', frameon=False)
     plt.grid(True, alpha=0.5)
@@ -142,9 +143,9 @@ def plot_lift(alpha_saved,lift_surface_saved,lift_wake_saved):
     plt.axvline(0, color='gray', linewidth=2, linestyle='--')
 
     plt.xlim(min(alpha_saved),max(alpha_saved))
-    plt.xlabel(r'alpha [°]', fontsize=14, fontweight='bold')
+    plt.xlabel(r'$\alpha$ [°]', fontsize=14, fontweight='bold')
     plt.ylabel(r'$C_l$ [-]', fontsize=14, fontweight='bold')
-    plt.title(r'Lift coefficient vs alpha', fontsize=16, fontweight='bold')
+    #plt.title(r'Lift coefficient vs alpha', fontsize=16, fontweight='bold')
 
     plt.legend(fontsize=12, loc='best', frameon=False)
     plt.grid(True, alpha=0.5)
@@ -189,9 +190,9 @@ def plot_drag(alpha_saved,drag_surface_saved,drag_wake_saved):
     plt.axvline(0, color='gray', linewidth=2, linestyle='--')
 
     plt.xlim(min(alpha_saved),max(alpha_saved))
-    plt.xlabel('alpha [°]', fontsize=14, fontweight='bold')
+    plt.xlabel(r'$\alpha$ [°]', fontsize=14, fontweight='bold')
     plt.ylabel(r'$C_d$ [-]', fontsize=14, fontweight='bold')
-    plt.title('Drag coefficient vs alpha', fontsize=16, fontweight='bold')
+    #plt.title('Drag coefficient vs alpha', fontsize=16, fontweight='bold')
 
     plt.legend(fontsize=12, loc='best', frameon=False)
     plt.grid(True, alpha=0.5)
@@ -210,9 +211,31 @@ def plot_moment(alpha_saved,moment_surface_saved):
     plt.axvline(0, color='gray', linewidth=2, linestyle='--')
 
     plt.xlim(min(alpha_saved),max(alpha_saved))
-    plt.xlabel('alpha [°]', fontsize=14, fontweight='bold')
+    plt.xlabel(r'$\alpha$ [°]', fontsize=14, fontweight='bold')
     plt.ylabel(r'$C_m$ [-]', fontsize=14, fontweight='bold')
-    plt.title('Moment coefficient about quater chord vs alpha', fontsize=16, fontweight='bold')
+    #plt.title('Moment coefficient about quater chord vs alpha', fontsize=16, fontweight='bold')
+
+    plt.legend(fontsize=12, loc='best', frameon=False)
+    plt.grid(True, alpha=0.5)
+
+    plt.tight_layout()
+def plot_cl_cd(alpha_saved,lift_surface_saved,lift_wake_saved,drag_surface_saved,drag_wake_saved):
+    n_alpha_max=np.argmax(alpha_saved)
+    plt.figure(figsize=(10, 6))
+
+    plt.plot(drag_surface_saved[n_alpha_max-1:], lift_surface_saved[n_alpha_max-1:], label=r'$C_l$ vs $C_d$ from airfoil pressure data, hysteresis', linewidth=linewidth_minor, color='tab:red')
+    plt.plot(drag_wake_saved[n_alpha_max-1:], lift_wake_saved[n_alpha_max-1:], label=r'$C_l$ vs $C_d$ from wake rake data, hysteresis', linewidth=linewidth_minor, color='tab:purple')
+
+    plt.plot(drag_surface_saved[0:n_alpha_max], lift_surface_saved[0:n_alpha_max], label=r'$C_l$ vs $C_d$ from airfoil pressure data', linewidth=linewidth_major, color='tab:orange')
+    plt.plot(drag_wake_saved[0:n_alpha_max], lift_wake_saved[0:n_alpha_max], label=r'$C_l$ vs $C_d$ from wake rake data', linewidth=linewidth_major, color='tab:blue')
+
+    plt.axhline(0, color='gray', linewidth=2, linestyle='--')
+    plt.axvline(0, color='gray', linewidth=2, linestyle='--')
+
+    plt.xlim(0)
+    plt.xlabel(r'$C_d$ [-]', fontsize=14, fontweight='bold')
+    plt.ylabel(r'$C_l$  [-]', fontsize=14, fontweight='bold')
+    #plt.title(r'$C_l$ vs $C_d$', fontsize=16, fontweight='bold')
 
     plt.legend(fontsize=12, loc='best', frameon=False)
     plt.grid(True, alpha=0.5)
