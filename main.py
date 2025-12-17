@@ -53,7 +53,7 @@ def plot_forces():
     lift_wake_saved=np.array(lift_wake_saved)
     drag_wake_saved=np.array(drag_wake_saved)
 
-    # fc.plot_u(wake_u,0,220,0.01)
+    fc.plot_u(wake_u,0,220,0.01)
     fc.plot_lift(alpha_saved,lift_surface_saved,lift_wake_saved)
     fc.plot_drag(alpha_saved,drag_surface_saved,drag_wake_saved)
     fc.plot_moment(alpha_saved,moment_surface_saved)
