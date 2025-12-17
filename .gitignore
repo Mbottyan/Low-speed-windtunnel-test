@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+pip-selfcheck.json
+.tox/
+.eggs/
+lib/
+lib64/
+include/
+share/
+bin/
+man/
+build/
+dist/
+*.egg-info/
+.DS_Store
