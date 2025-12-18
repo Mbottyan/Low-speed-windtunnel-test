@@ -4,7 +4,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib as mpl
 
-mpl.rcParams['mathtext.default'] = 'regular'
+# mpl.rcParams['mathtext.default'] = 'regular'
 linewidth_major=2
 linewidth_minor=1
 def scatter_point(x, y, **kwargs):
@@ -53,7 +53,7 @@ def drag_velocity(u_inf,p_inf, p_y,rho, y_locations,u):
     u2_avg/=(y_locations[-1]-y_locations[0])
     drag+=rho*(u_inf*u_avg-u2_avg)*(y_locations[-1]-y_locations[0])
     return drag 
-
+#plt.title
 def lift_drag_surface_alpha(alpha,location_x_top, location_x_bottom,location_y_top,location_y_bottom,pressure_top, pessure_bottom):
     lift=normal_force(location_x_top, location_x_bottom, pressure_top, pessure_bottom)*cos(np.radians(alpha))-tangential_force(location_y_top,location_y_bottom, pressure_top, pessure_bottom)*sin(np.radians(alpha))
     drag=normal_force(location_x_top, location_x_bottom, pressure_top, pessure_bottom)*sin(np.radians(alpha))+tangential_force(location_y_top,location_y_bottom, pressure_top, pessure_bottom)*cos(np.radians(alpha))
@@ -98,34 +98,54 @@ def plot_u(u,min_y, max_y, step=0.1):
     y =np.arange(min_y, max_y + step, step)
     u_val = np.array([u(yi/1000) for yi in y])
 
-    plt.figure(figsize=(10, 6))
+    plt.figure( figsize=(7,5))
 
     plt.plot(y, u_val, label='Wake rake velocicy profile', linewidth=2, color='tab:orange')
-
-    plt.axhline(0, color='gray', linewidth=2, linestyle='--')
     
     plt.xlim(min_y,max_y)
     plt.ylim(0)
-    plt.xlabel('y [mm]', fontsize=14, fontweight='bold')
-    plt.ylabel('Velocity [m/s]', fontsize=14, fontweight='bold')
-    #plt.title('Wake rake velocicy vs y', fontsize=16, fontweight='bold')
+    plt.xlabel(r'Wake Rake Location [mm]' )
+    plt.ylabel(r'Velocity [m/s]' )
     
-    plt.legend(fontsize=12, loc='best', frameon=False)
-    plt.grid(True, alpha=0.5)
-    
-    plt.tight_layout()
+    plt.minorticks_on()
+    plt.grid(which='major', linestyle='-', linewidth='0.5', color='black')
+    plt.grid(which='minor', linestyle=':', linewidth='0.5', color='gray', alpha = 0.5)
+    plt.axhline(0, color="black", linewidth=1.5, linestyle="--")
+    plt.legend()
+
+def write_vaues(alpha_saved,lift_wake_saved,drag_wake_saved, moment_surface_saved):
+    n_alpha_max=np.argmax(alpha_saved)+1
+    import csv
+
+    with open('data files/forces_files/forces.csv', 'w', newline='') as f:
+        writer = csv.writer(f)
+
+        # optional header
+        writer.writerow(['alpha', 'cl', 'cd', 'cm'])
+
+        for alpha, cl, cd, cm in zip(
+            alpha_saved[:n_alpha_max],
+            lift_wake_saved[:n_alpha_max],
+            drag_wake_saved[:n_alpha_max],
+            moment_surface_saved[:n_alpha_max]
+        ):
+            writer.writerow([
+                f"{alpha:.6f}",
+                f"{cl:.6f}",
+                f"{cd:.6f}",
+                f"{cm:.6f}"])
 
 def plot_lift(alpha_saved,lift_surface_saved,lift_wake_saved):
-    n_alpha_max=np.argmax(alpha_saved)
-    plt.figure(figsize=(10, 6))
+    n_alpha_max=np.argmax(alpha_saved)+1
+    plt.figure(figsize=(7,5))
 
-    plt.plot(alpha_saved[n_alpha_max-1:], lift_surface_saved[n_alpha_max-1:], label=r'$C_l$ from airfoil pressure data, hysteresis', linewidth=linewidth_minor, color='tab:red')
-    plt.plot(alpha_saved[n_alpha_max-1:], lift_wake_saved[n_alpha_max-1:], label=r'$C_l$ from airfoil pressure and wake rake data, hysteresis', linewidth=linewidth_minor, color='tab:purple')
-    plt.plot(alpha_saved[0:n_alpha_max], lift_surface_saved[0:n_alpha_max], label=r'$C_l$ from airfoil pressure data', linewidth=linewidth_major, color='tab:orange')
-    plt.plot(alpha_saved[0:n_alpha_max], lift_wake_saved[0:n_alpha_max], label=r'$C_l$ from airfoil pressure and wake rake data', linewidth=linewidth_major, color='tab:blue')
+    plt.plot(alpha_saved[n_alpha_max-1:], lift_surface_saved[n_alpha_max-1:], label=r'Airfoil pressure data, hysteresis', linewidth=linewidth_minor, color='tab:red')
+    plt.plot(alpha_saved[n_alpha_max-1:], lift_wake_saved[n_alpha_max-1:], label=r'Airfoil pressure and wake rake data, hysteresis', linewidth=linewidth_minor, color='tab:purple')
+    plt.plot(alpha_saved[0:n_alpha_max], lift_surface_saved[0:n_alpha_max], label=r'Airfoil pressure data', linewidth=linewidth_major, color='tab:orange')
+    plt.plot(alpha_saved[0:n_alpha_max], lift_wake_saved[0:n_alpha_max], label=r'Airfoil pressure and wake rake data', linewidth=linewidth_major, color='tab:blue')
 
-    scatter_point(0, lift_wake_saved[5])  # mark the point
-    plt.annotate(fr"$C_{{l,max}}$={lift_wake_saved[5]:.3f}",(0, lift_wake_saved[5]),textcoords="offset points",xytext=(-100, 10),arrowprops=dict(arrowstyle="->"),fontsize=15)
+    scatter_point(0, lift_wake_saved[5])
+    plt.annotate(fr"$C_{{l,0}}$={lift_wake_saved[5]:.3f}",(0, lift_wake_saved[5]),textcoords="offset points",xytext=(50, -5),arrowprops=dict(arrowstyle="->"),fontsize=12,color = "#1f4ed8")
 
     idx = np.argmax(lift_wake_saved)
 
@@ -134,32 +154,30 @@ def plot_lift(alpha_saved,lift_surface_saved,lift_wake_saved):
         fr"$C_{{l,max}}$={lift_wake_saved[idx]:.3f}",
         (alpha_saved[idx], lift_wake_saved[idx]),
         textcoords="offset points",
-        xytext=(-50, -70),
+        xytext=(-35, -50),
         arrowprops=dict(arrowstyle="->"),
-        fontsize=15
+        fontsize=12,
+        color = "#1f4ed8"
     )
 
-    plt.axhline(0, color='gray', linewidth=2, linestyle='--')
-    plt.axvline(0, color='gray', linewidth=2, linestyle='--')
-
     plt.xlim(min(alpha_saved),max(alpha_saved))
-    plt.xlabel(r'$\alpha$ [°]', fontsize=14, fontweight='bold')
-    plt.ylabel(r'$C_l$ [-]', fontsize=14, fontweight='bold')
-    #plt.title(r'Lift coefficient vs alpha', fontsize=16, fontweight='bold')
-
-    plt.legend(fontsize=12, loc='best', frameon=False)
-    plt.grid(True, alpha=0.5)
-
-    plt.tight_layout()
-    
+    plt.xlabel(r"Angle of Attack $\alpha$ [deg]")
+    plt.ylabel(r"Lift Coefficient ($C_l$) [-]")
+    plt.minorticks_on()
+    plt.grid(which='major', linestyle='-', linewidth='0.5', color='black')
+    plt.grid(which='minor', linestyle=':', linewidth='0.5', color='gray', alpha = 0.5)
+    plt.axhline(0, color="black", linewidth=1.5, linestyle="--")
+    plt.axvline(0, color="black", linewidth=1.5, linestyle="--")
+    plt.legend()
+ 
 def plot_drag(alpha_saved,drag_surface_saved,drag_wake_saved):
-    n_alpha_max=np.argmax(alpha_saved)
-    plt.figure(figsize=(10, 6))
+    n_alpha_max=np.argmax(alpha_saved)+1
+    plt.figure( figsize=(7,5))
 
-    plt.plot(alpha_saved[n_alpha_max-1:], drag_surface_saved[n_alpha_max-1:], label=r'$C_d$ from airfoil pressure data, hysteresis', linewidth=linewidth_minor, color='tab:red')
-    plt.plot(alpha_saved[n_alpha_max-1:], drag_wake_saved[n_alpha_max-1:], label=r'$C_d$ from wake rake data, hysteresis', linewidth=linewidth_minor, color='tab:purple')
-    plt.plot(alpha_saved[0:n_alpha_max], drag_surface_saved[0:n_alpha_max], label=r'$C_d$ from airfoil pressure data', linewidth=linewidth_major, color='tab:orange')
-    plt.plot(alpha_saved[0:n_alpha_max], drag_wake_saved[0:n_alpha_max], label=r'$C_d$ from wake rake data', linewidth=linewidth_major, color='tab:blue')
+    plt.plot(alpha_saved[n_alpha_max-1:], drag_surface_saved[n_alpha_max-1:], label=r'Airfoil pressure data, hysteresis', linewidth=linewidth_minor, color='tab:red')
+    plt.plot(alpha_saved[n_alpha_max-1:], drag_wake_saved[n_alpha_max-1:], label=r'Wake rake data, hysteresis', linewidth=linewidth_minor, color='tab:purple')
+    plt.plot(alpha_saved[0:n_alpha_max], drag_surface_saved[0:n_alpha_max], label=r'Airfoil pressure data', linewidth=linewidth_major, color='tab:orange')
+    plt.plot(alpha_saved[0:n_alpha_max], drag_wake_saved[0:n_alpha_max], label=r'Wake rake data', linewidth=linewidth_major, color='tab:blue')
 
 
     idx = np.argmin(drag_surface_saved[0:n_alpha_max])
@@ -169,9 +187,10 @@ def plot_drag(alpha_saved,drag_surface_saved,drag_wake_saved):
         fr"$C_{{d,min}}$={drag_surface_saved[idx]:.4f}",
         (alpha_saved[idx], drag_surface_saved[idx]),
         textcoords="offset points",
-        xytext=(-120, 35),
+        xytext=(4, 50),
         arrowprops=dict(arrowstyle="->"),
-        fontsize=15
+        fontsize=12,
+        color = "#1f4ed8"
     )
 
     idx = np.argmin(drag_wake_saved[0:n_alpha_max])
@@ -181,63 +200,59 @@ def plot_drag(alpha_saved,drag_surface_saved,drag_wake_saved):
         fr"$C_{{d,min}}$={drag_wake_saved[idx]:.4f}",
         (alpha_saved[idx], drag_wake_saved[idx]),
         textcoords="offset points",
-        xytext=(-50, 35),
+        xytext=(0, 75),
         arrowprops=dict(arrowstyle="->"),
-        fontsize=15
+        fontsize=12,
+        color = "#1f4ed8"
     )
 
-    plt.axhline(0, color='gray', linewidth=2, linestyle='--')
-    plt.axvline(0, color='gray', linewidth=2, linestyle='--')
-
     plt.xlim(min(alpha_saved),max(alpha_saved))
-    plt.xlabel(r'$\alpha$ [°]', fontsize=14, fontweight='bold')
-    plt.ylabel(r'$C_d$ [-]', fontsize=14, fontweight='bold')
-    #plt.title('Drag coefficient vs alpha', fontsize=16, fontweight='bold')
+    plt.xlabel(r"Angle of Attack $\alpha$ [deg]")
+    plt.ylabel(r'Drag Coefficient ($C_d$) [-]')
 
-    plt.legend(fontsize=12, loc='best', frameon=False)
-    plt.grid(True, alpha=0.5)
-
-    plt.tight_layout()
+    plt.minorticks_on()
+    plt.grid(which='major', linestyle='-', linewidth='0.5', color='black')
+    plt.grid(which='minor', linestyle=':', linewidth='0.5', color='gray', alpha = 0.5)
+    plt.axhline(0, color="black", linewidth=1.5, linestyle="--")
+    plt.axvline(0, color="black", linewidth=1.5, linestyle="--")
+    plt.legend()
 
 def plot_moment(alpha_saved,moment_surface_saved):
-    n_alpha_max=np.argmax(alpha_saved)
-    plt.figure(figsize=(10, 6))
+    n_alpha_max=np.argmax(alpha_saved)+1
+    plt.figure( figsize=(7,5))
 
-    plt.plot(alpha_saved[n_alpha_max-1:], moment_surface_saved[n_alpha_max-1:], label=r'$C_m$ from airfoil pressure data, hysteresis', linewidth=linewidth_minor, color='tab:red')
-    plt.plot(alpha_saved[0:n_alpha_max], moment_surface_saved[0:n_alpha_max], label=r'$C_m$ from airfoil pressure data', linewidth=linewidth_major, color='tab:orange')
+    plt.plot(alpha_saved[n_alpha_max-1:], moment_surface_saved[n_alpha_max-1:], label=r'Airfoil pressure data, hysteresis', linewidth=linewidth_minor, color='tab:red')
+    plt.plot(alpha_saved[0:n_alpha_max], moment_surface_saved[0:n_alpha_max], label=r'Airfoil pressure data', linewidth=linewidth_major, color='tab:orange')
 
+    plt.xlabel(r"Angle of Attack $\alpha$ [deg]")
+    plt.ylabel(r'Moment Coefficient ($C_m$) [-]')
 
-    plt.axhline(0, color='gray', linewidth=2, linestyle='--')
-    plt.axvline(0, color='gray', linewidth=2, linestyle='--')
-
-    plt.xlim(min(alpha_saved),max(alpha_saved))
-    plt.xlabel(r'$\alpha$ [°]', fontsize=14, fontweight='bold')
-    plt.ylabel(r'$C_m$ [-]', fontsize=14, fontweight='bold')
-    #plt.title('Moment coefficient about quater chord vs alpha', fontsize=16, fontweight='bold')
-
-    plt.legend(fontsize=12, loc='best', frameon=False)
-    plt.grid(True, alpha=0.5)
+    plt.minorticks_on()
+    plt.grid(which='major', linestyle='-', linewidth='0.5', color='black')
+    plt.grid(which='minor', linestyle=':', linewidth='0.5', color='gray', alpha = 0.5)
+    plt.axhline(0, color="black", linewidth=1.5, linestyle="--")
+    plt.axvline(0, color="black", linewidth=1.5, linestyle="--")
+    plt.legend()
 
     plt.tight_layout()
+
 def plot_cl_cd(alpha_saved,lift_surface_saved,lift_wake_saved,drag_surface_saved,drag_wake_saved):
-    n_alpha_max=np.argmax(alpha_saved)
-    plt.figure(figsize=(10, 6))
+    n_alpha_max=np.argmax(alpha_saved)+1
+    plt.figure( figsize=(7,5))
 
-    plt.plot(drag_surface_saved[n_alpha_max-1:], lift_surface_saved[n_alpha_max-1:], label=r'$C_l$ vs $C_d$ from airfoil pressure data, hysteresis', linewidth=linewidth_minor, color='tab:red')
-    plt.plot(drag_wake_saved[n_alpha_max-1:], lift_wake_saved[n_alpha_max-1:], label=r'$C_l$ vs $C_d$ from wake rake data, hysteresis', linewidth=linewidth_minor, color='tab:purple')
+    plt.plot(drag_surface_saved[n_alpha_max-1:], lift_surface_saved[n_alpha_max-1:], label=r'Airfoil pressure data, hysteresis', linewidth=linewidth_minor, color='tab:red')
+    plt.plot(drag_wake_saved[n_alpha_max-1:], lift_wake_saved[n_alpha_max-1:], label=r'Wake rake data, hysteresis', linewidth=linewidth_minor, color='tab:purple')
 
-    plt.plot(drag_surface_saved[0:n_alpha_max], lift_surface_saved[0:n_alpha_max], label=r'$C_l$ vs $C_d$ from airfoil pressure data', linewidth=linewidth_major, color='tab:orange')
-    plt.plot(drag_wake_saved[0:n_alpha_max], lift_wake_saved[0:n_alpha_max], label=r'$C_l$ vs $C_d$ from wake rake data', linewidth=linewidth_major, color='tab:blue')
-
-    plt.axhline(0, color='gray', linewidth=2, linestyle='--')
-    plt.axvline(0, color='gray', linewidth=2, linestyle='--')
+    plt.plot(drag_surface_saved[0:n_alpha_max], lift_surface_saved[0:n_alpha_max], label=r'Airfoil pressure data', linewidth=linewidth_major, color='tab:orange')
+    plt.plot(drag_wake_saved[0:n_alpha_max], lift_wake_saved[0:n_alpha_max], label=r'Wake rake data', linewidth=linewidth_major, color='tab:blue')
 
     plt.xlim(0)
-    plt.xlabel(r'$C_d$ [-]', fontsize=14, fontweight='bold')
-    plt.ylabel(r'$C_l$  [-]', fontsize=14, fontweight='bold')
-    #plt.title(r'$C_l$ vs $C_d$', fontsize=16, fontweight='bold')
+    plt.xlabel(r'Drag Coefficient ($C_d$) [-]' )
+    plt.ylabel(r'Lift Coefficient  ($C_l$)  [-]' )
 
-    plt.legend(fontsize=12, loc='best', frameon=False)
-    plt.grid(True, alpha=0.5)
-
-    plt.tight_layout()
+    plt.minorticks_on()
+    plt.grid(which='major', linestyle='-', linewidth='0.5', color='black')
+    plt.grid(which='minor', linestyle=':', linewidth='0.5', color='gray', alpha = 0.5)
+    plt.axhline(0, color="black", linewidth=1.5, linestyle="--")
+    plt.axvline(0, color="black", linewidth=1.5, linestyle="--")
+    plt.legend()

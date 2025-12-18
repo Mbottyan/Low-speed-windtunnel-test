@@ -10,8 +10,6 @@ import forces_calculation as fc
 import matplotlib.pyplot as plt
 import matplotlib as mpl
 
-mpl.rcParams['mathtext.default'] = 'regular'
-
 
 
 def plot_forces():
@@ -53,10 +51,12 @@ def plot_forces():
     lift_wake_saved=np.array(lift_wake_saved)
     drag_wake_saved=np.array(drag_wake_saved)
 
-    fc.plot_u(wake_u,0,220,0.01)
-    fc.plot_lift(alpha_saved,lift_surface_saved,lift_wake_saved)
-    fc.plot_drag(alpha_saved,drag_surface_saved,drag_wake_saved)
-    fc.plot_moment(alpha_saved,moment_surface_saved)
+    fc.write_vaues(alpha_saved,lift_wake_saved,drag_wake_saved, moment_surface_saved)
+    # fc.plot_u(wake_u,0,220,0.01)
+    # fc.plot_lift(alpha_saved,lift_surface_saved,lift_wake_saved)
+    # fc.plot_drag(alpha_saved,drag_surface_saved,drag_wake_saved)
+    # fc.plot_moment(alpha_saved,moment_surface_saved)
+    # fc.plot_cl_cd(alpha_saved,lift_surface_saved,lift_wake_saved,drag_surface_saved,drag_wake_saved)
     plt.show()
 
 c=0.16
