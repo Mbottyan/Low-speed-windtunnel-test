@@ -9,7 +9,7 @@ OUTPUT_FILE = 'data files/Forces (Cl&Cd vs AoA)/corrected_forces.csv'
 
 
 # constants (in meters)
-h = 0.6   #from floor to ceiling (h)
+h = 0.4   #from floor to ceiling (h) (int the caseo of a 2D airfoil, consider only for the test section height = wing span)
 c  = 0.16  #airfoil chord (c)
 t_max = c * 0.104 #maximum thickness(t)
 
