@@ -19,7 +19,7 @@ def plot_forces():
     moment_surface_saved=[]
     lift_wake_saved=[]
     drag_wake_saved=[]
-    
+    k_saved=[]
     for measurment_n in run_number:
         alpha=alpha_array[measurment_n-1]
         p_atm=p_bar_value[measurment_n-1]
@@ -33,16 +33,36 @@ def plot_forces():
 
         alpha_saved.append(alpha)
         lift,drag=fc.lift_drag_surface_alpha(alpha,airfoil_taps_location_top[:, 0],airfoil_taps_location_bottom[:, 0],airfoil_taps_location_top[:, 1],airfoil_taps_location_bottom[:, 1],airfoil_taps_pressure_top[measurment_n-1],airfoil_taps_pressure_bottom[measurment_n-1])/q_inf
+        normal=fc.normal_force(airfoil_taps_location_top[:, 0],airfoil_taps_location_bottom[:, 0],airfoil_taps_pressure_top[measurment_n-1],airfoil_taps_pressure_bottom[measurment_n-1])/q_inf
         moment=fc.moment(airfoil_taps_location_top[:, 0],airfoil_taps_location_bottom[:, 0],airfoil_taps_location_top[:, 1],airfoil_taps_location_bottom[:, 1],airfoil_taps_pressure_top[measurment_n-1],airfoil_taps_pressure_bottom[measurment_n-1])/q_inf
-        
+        k_saved.append(-moment/normal)
+
         lift_surface_saved.append(lift)
         drag_surface_saved.append(drag)
-        moment_surface_saved.append(moment+0.25*fc.normal_force(airfoil_taps_location_top[:, 0],airfoil_taps_location_bottom[:, 0],airfoil_taps_pressure_top[measurment_n-1],airfoil_taps_pressure_bottom[measurment_n-1])/q_inf)
+        moment_surface_saved.append(moment+0.25*normal)
 
         lift,drag=fc.lift_drag_wake_alpha(alpha,airfoil_taps_location_top[:, 0],airfoil_taps_location_bottom[:, 0],airfoil_taps_pressure_top[measurment_n-1],airfoil_taps_pressure_bottom[measurment_n-1],u_inf,p_inf,static_pressure_taps_wake[measurment_n-1],static_wake_rake_locations,rho,wake_u,c)/q_inf
         
         lift_wake_saved.append(lift)
         drag_wake_saved.append(drag)
+        if alpha==alpha_array[0]:
+            fc.plot_u(wake_u,0,220,0.01,u_inf)
+            print(alpha)
+        if alpha==0:
+            fc.plot_u(wake_u,0,220,0.01,u_inf)
+            print(alpha)
+        if alpha==5:
+            fc.plot_u(wake_u,0,220,0.01,u_inf)
+            print(alpha)
+        if alpha==10:
+            fc.plot_u(wake_u,0,220,0.01,u_inf)
+            print(alpha)
+        if alpha==12:
+            fc.plot_u(wake_u,0,220,0.01,u_inf)
+            print(alpha)
+        if alpha==17:
+            fc.plot_u(wake_u,0,220,0.01,u_inf)
+            print(alpha)
 
     alpha_saved=np.array(alpha_saved)
     lift_surface_saved=np.array(lift_surface_saved)
@@ -51,12 +71,18 @@ def plot_forces():
     lift_wake_saved=np.array(lift_wake_saved)
     drag_wake_saved=np.array(drag_wake_saved)
 
-    fc.write_vaues(alpha_saved,lift_wake_saved,drag_wake_saved, moment_surface_saved)
-    # fc.plot_u(wake_u,0,220,0.01)
+    # fc.write_vaues(alpha_saved,lift_wake_saved,drag_wake_saved, moment_surface_saved)
     # fc.plot_lift(alpha_saved,lift_surface_saved,lift_wake_saved)
     # fc.plot_drag(alpha_saved,drag_surface_saved,drag_wake_saved)
     # fc.plot_moment(alpha_saved,moment_surface_saved)
     # fc.plot_cl_cd(alpha_saved,lift_surface_saved,lift_wake_saved,drag_surface_saved,drag_wake_saved)
+
+    # fc.plot_k(alpha_saved,k_saved)
+
+    # fc.plot_cl_corr(alpha_saved,lift_wake_saved)
+    # fc.plot_drag_corr(alpha_saved,drag_wake_saved)
+    # fc.plot_moment_corr(alpha_saved,moment_surface_saved)
+    # fc.plot_cl_cd_corr(alpha_saved,lift_wake_saved,drag_wake_saved)
     plt.show()
 
 c=0.16
@@ -180,4 +206,4 @@ p_inf = rc.calculate_reference_static_pressure(sum(total_pressure_pivot) / n_mea
 
 print(pc.pressure_coefficient(sum(p_bar_value)/n_measurements, q_inf, p_inf, pressure_taps, 10, airfoil_pressure_tap_coordinates, alpha_array))  #if you change the number you cahnge which experemient you are calucalting the cp for
 
-plot_forces()
+# plot_forces()
