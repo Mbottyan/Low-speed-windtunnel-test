@@ -38,7 +38,7 @@ def plot_cp(data):
         plt.plot([d[0] for d in lower], [d[2] for d in lower], label='Lower Surface', linewidth=linewidth_major, marker='o', color='tab:blue',ms=marker_s_main)
     
     plt.xlabel('X/c', fontsize=axis_font)
-    plt.ylabel('Cp', fontsize=axis_font)
+    plt.ylabel(r'$\mathrm{C_p}$', fontsize=axis_font)
     
     plt.legend(fontsize=legend_font, loc='best')
     
